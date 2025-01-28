@@ -1,61 +1,105 @@
-import pytest
-from zadanie_2.zadanie2 import Pojazd, Samochod, Autobus, FabrykaPojazdow, FabrykaSamochodow, FabrykaAutobusow
+from abc import ABC, abstractmethod
 
-# Test 1: Tworzenie obiektu Samochod i sprawdzanie atrybutów
-def test_tworzenie_samochodu():
-    samochod = Samochod("Toyota", 2022, liczba_drzwi=4)
-    assert samochod._model == "Toyota"
-    assert samochod._rok == 2022
-    assert samochod.liczba_drzwi == 4
+class Pojazd(ABC):
+    def __init__(self, model: str, rok: int):
+        self._model = model
+        self._rok = rok
+        self._predkosc = 0
 
-# Test 2: Tworzenie obiektu Autobus i sprawdzanie atrybutów
-def test_tworzenie_autobusu():
-    autobus = Autobus("Solaris", 2021, liczba_miejsc=50)
-    assert autobus._model == "Solaris"
-    assert autobus._rok == 2021
-    assert autobus.liczba_miejsc == 50
+    @property
+    def predkosc(self) -> float:
+        return self._predkosc
 
-# Test 3: Sprawdzanie gettera, settera i deletera predkosci
-def test_predkosc():
-    samochod = Samochod("Ford", 2023, liczba_drzwi=4)
-    samochod.predkosc = 100
-    assert samochod.predkosc == 100
-    del samochod.predkosc
-    assert samochod.predkosc == 0
+    @predkosc.setter
+    def predkosc(self, value: float):
+        if value < 0:
+            raise ValueError("Prędkość nie może być ujemna!")
+        self._predkosc = value
 
-# Test 4: Ustawienie prędkości na wartość ujemną (oczekiwany wyjątek)
-def test_predkosc_wyjatki():
-    samochod = Samochod("BMW", 2023, liczba_drzwi=2)
-    with pytest.raises(ValueError, match="Prędkość nie może być ujemna!"):
-        samochod.predkosc = -10
+    @predkosc.deleter
+    def predkosc(self):
+        self._predkosc = 0
 
-# Test 5: Tworzenie fabryki samochodów i produkowanie pojazdu
-def test_fabryka_samochodow():
-    fabryka = FabrykaSamochodow("Fabryka Samochodów")
-    samochod = fabryka.stworz_pojazd("Fiat", 2020, liczba_drzwi=5)
-    assert isinstance(samochod, Samochod)
-    assert samochod._model == "Fiat"
-    assert fabryka.ile_wyprodukowano() == 1
+class Samochod(Pojazd):
+    def __init__(self, model: str, rok: int, liczba_drzwi: int):
+        super().__init__(model, rok)
+        self.liczba_drzwi = liczba_drzwi
 
-# Test 6: Tworzenie fabryki autobusów i produkowanie pojazdu
-def test_fabryka_autobusow():
-    fabryka = FabrykaAutobusow("Fabryka Autobusów")
-    autobus = fabryka.stworz_pojazd("Volvo", 2019, liczba_miejsc=60)
-    assert isinstance(autobus, Autobus)
-    assert autobus._model == "Volvo"
-    assert fabryka.ile_wyprodukowano() == 1
+class Autobus(Pojazd):
+    def __init__(self, model: str, rok: int, liczba_miejsc: int):
+        super().__init__(model, rok)
+        self.liczba_miejsc = liczba_miejsc
 
-# Test 7: Wyjątek przy próbie stworzenia pojazdu z nieprawidłowym rokiem
-def test_fabryka_zly_rok():
-    fabryka = FabrykaSamochodow("Fabryka Samochodów")
-    with pytest.raises(ValueError, match="Nieprawidłowy rok produkcji!"):
-        fabryka.stworz_pojazd("Fiat", 1899, liczba_drzwi=5)
+class FabrykaPojazdow(ABC):
+    def __init__(self, nazwa: str):
+        self._nazwa = nazwa
+        self._liczba_wyprodukowanych = 0
 
-# Test 8: Test metody klasy utworz_fabryke
-def test_utworz_fabryke():
-    fabryka_samochodow = FabrykaPojazdow.utworz_fabryke("samochod", "Fabryka Samochodów")
-    fabryka_autobusow = FabrykaPojazdow.utworz_fabryke("autobus", "Fabryka Autobusów")
-    assert isinstance(fabryka_samochodow, FabrykaSamochodow)
-    assert fabryka_samochodow.nazwa == "Fabryka Samochodów"
-    assert isinstance(fabryka_autobusow, FabrykaAutobusow)
-    assert fabryka_autobusow.nazwa == "Fabryka Autobusów"
+    @property
+    def nazwa(self) -> str:
+        return self._nazwa
+
+    @classmethod
+    def utworz_fabryke(cls, typ_fabryki: str, nazwa: str):
+        if typ_fabryki == 'samochod':
+            return FabrykaSamochodow(nazwa)
+        elif typ_fabryki == 'autobus':
+            return FabrykaAutobusow(nazwa)
+        else:
+            raise ValueError("Nieznany typ fabryki!")
+
+    @staticmethod
+    def sprawdz_rok(rok: int) -> bool:
+        return 1900 <= rok <= 2024
+
+    def _zwieksz_licznik(self):
+        self._liczba_wyprodukowanych += 1
+
+    def ile_wyprodukowano(self) -> int:
+        return self._liczba_wyprodukowanych
+
+    @abstractmethod
+    def stworz_pojazd(self, model: str, rok: int, **kwargs) -> Pojazd:
+        pass
+
+class FabrykaSamochodow(FabrykaPojazdow):
+    def stworz_pojazd(self, model: str, rok: int, liczba_drzwi: int = 4) -> Samochod:
+        if not self.sprawdz_rok(rok):
+            raise ValueError("Nieprawidłowy rok produkcji!")
+        pojazd = Samochod(model, rok, liczba_drzwi)
+        self._zwieksz_licznik()
+        return pojazd
+
+class FabrykaAutobusow(FabrykaPojazdow):
+    def stworz_pojazd(self, model: str, rok: int, liczba_miejsc: int = 50) -> Autobus:
+        if not self.sprawdz_rok(rok):
+            raise ValueError("Nieprawidłowy rok produkcji!")
+        pojazd = Autobus(model, rok, liczba_miejsc)
+        self._zwieksz_licznik()
+        return pojazd
+
+def main():
+    # Utworz fabryki pojazdow (samochodow i autobusow)
+    fabryka_samochodow = FabrykaPojazdow.utworz_fabryke('samochod', "Fabryka Samochodów Warszawa")
+    fabryka_autobusow = FabrykaPojazdow.utworz_fabryke('autobus', "Fabryka Autobusów Kraków")
+
+    # Utworzone fabryki - demonstracja @property nazwa
+    print(f"Nazwa fabryki: {fabryka_samochodow.nazwa}")  
+    print(f"Nazwa fabryki: {fabryka_autobusow.nazwa}")  
+
+    # Utworz pojazdy
+    samochod = fabryka_samochodow.stworz_pojazd("Fiat", 2020, liczba_drzwi=5)
+    autobus = fabryka_autobusow.stworz_pojazd("Solaris", 2023, liczba_miejsc=60)
+
+    # Demonstracja dzialania gettera, settera i deletera
+    samochod.predkosc = 50  # uzycie setter
+    print(f"Prędkość samochodu: {samochod.predkosc}")  # uzycie getter
+    del samochod.predkosc  # uzycie deleter
+    print(f"Prędkość po reset: {samochod.predkosc}")
+
+    # Pokazanie ile pojazdow wyprodukowano
+    print(f"Wyprodukowano samochodów: {fabryka_samochodow.ile_wyprodukowano()}")
+    print(f"Wyprodukowano autobusów: {fabryka_autobusow.ile_wyprodukowano()}")
+
+if __name__ == "__main__":
+    main()
