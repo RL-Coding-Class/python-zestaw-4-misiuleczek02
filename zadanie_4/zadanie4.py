@@ -80,7 +80,7 @@ def pole(instance, r):
     instance.r = r
     return math.pi * r ** 2
 
-def pola_powierzchni(lista_figur):
+def polaPowierzchni(lista_figur):
     """Wyświetla pola powierzchni dla listy figur."""
     for figura in lista_figur:
         print(f"Pole obiektu: {pole(figura)}")
@@ -99,4 +99,5 @@ if __name__ == "__main__":
     print(f"Pole kwadratu po zmianie boku na 7: {pole(c, 7)}")
     print(f"Pole koła po zmianie promienia na 4.0: {pole(d, 4.0)}")
 
-    pola_powierzchni([a, b, c, d])
+    polaPowierzchni([a, b, c, d])
+
