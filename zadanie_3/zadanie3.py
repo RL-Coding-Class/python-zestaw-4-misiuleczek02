@@ -54,12 +54,14 @@ class DerivedHandler(EventHandler):
     # Obsługa zdarzeń typu int (nadpisanie)
     @EventHandler.handle_event.register
     def _(self, event: int):
-        print(f"[Derived Int] Obsługa int w DerivedHandler: {event}")
+        self.event_count += 1
+        print(f"[Derived Int] Obsługa int w DerivedHandler: {event}. Licznik: {self.event_count}")
 
     # Obsługa zdarzeń typu float
     @EventHandler.handle_event.register
     def _(self, event: float):
-        print(f"[Float] Obsługa zdarzenia float: {event}")
+        self.event_count += 1
+        print(f"[Float] Obsługa zdarzenia float: {event}. Licznik: {self.event_count}")
 
 # Demonstracja użycia
 if __name__ == "__main__":
