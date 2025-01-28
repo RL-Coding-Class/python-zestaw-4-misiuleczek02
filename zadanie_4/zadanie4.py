@@ -10,10 +10,6 @@ class Figura:
         """Zwraca opis figury."""
         return "Figura bazowa"
 
-    def parametry(self):
-        """Zwraca parametry figury."""
-        return {}
-
 class Prostokat(Figura):
     """Klasa reprezentująca prostokąt."""
     def __init__(self, x: int, y: int):
@@ -24,10 +20,6 @@ class Prostokat(Figura):
     def opis(self):
         """Zwraca opis prostokąta."""
         return f"Prostokąt o wymiarach {self.x}x{self.y}"
-
-    def parametry(self):
-        """Zwraca parametry prostokąta."""
-        return {"x": self.x, "y": self.y}
 
 class Kwadrat(Prostokat):
     """Klasa reprezentująca kwadrat."""
@@ -48,48 +40,44 @@ class Kolo(Figura):
         """Zwraca opis koła."""
         return f"Koło o promieniu {self.r}"
 
-    def parametry(self):
-        """Zwraca parametry koła."""
-        return {"r": self.r}
-
 @dispatch(Figura)
-def pole(figura):
+def pole(instance):
     """Zwraca pole dla klasy Figura."""
     return 0
 
 @dispatch(Prostokat)
-def pole(prostokat):
+def pole(instance):
     """Zwraca pole prostokąta."""
-    return prostokat.x * prostokat.y
+    return instance.x * instance.y
 
 @dispatch(Prostokat, int, int)
-def pole(prostokat, x, y):
-    """Zwraca pole prostokąta po zmianie jego wymiarów."""
-    prostokat.x = x
-    prostokat.y = y
+def pole(instance, x, y):
+    """Zmienia wymiary prostokąta i zwraca jego pole."""
+    instance.x = x
+    instance.y = y
     return x * y
 
 @dispatch(Kwadrat)
-def pole(kwadrat):
+def pole(instance):
     """Zwraca pole kwadratu."""
-    return kwadrat.x ** 2
+    return instance.x ** 2
 
 @dispatch(Kwadrat, int)
-def pole(kwadrat, x):
-    """Zwraca pole kwadratu po zmianie jego boku."""
-    kwadrat.x = x
-    kwadrat.y = x
+def pole(instance, x):
+    """Zmienia bok kwadratu i zwraca jego pole."""
+    instance.x = x
+    instance.y = x
     return x ** 2
 
 @dispatch(Kolo)
-def pole(kolo):
+def pole(instance):
     """Zwraca pole koła."""
-    return math.pi * kolo.r ** 2
+    return math.pi * instance.r ** 2
 
 @dispatch(Kolo, float)
-def pole(kolo, r):
-    """Zwraca pole koła po zmianie jego promienia."""
-    kolo.r = r
+def pole(instance, r):
+    """Zmienia promień koła i zwraca jego pole."""
+    instance.r = r
     return math.pi * r ** 2
 
 def pola_powierzchni(lista_figur):
@@ -98,7 +86,10 @@ def pola_powierzchni(lista_figur):
         print(f"Pole obiektu: {pole(figura)}")
 
 if __name__ == "__main__":
-    a, b, c, d = Figura(), Prostokat(2, 4), Kwadrat(2), Kolo(3)
+    a = Figura()
+    b = Prostokat(2, 4)
+    c = Kwadrat(2)
+    d = Kolo(3)
 
     print(f"Pole prostokąta (2x4): {pole(b)}")
     print(f"Pole kwadratu (bok=2): {pole(c)}")
@@ -106,6 +97,6 @@ if __name__ == "__main__":
 
     print(f"Pole prostokąta po zmianie na 5x6: {pole(b, 5, 6)}")
     print(f"Pole kwadratu po zmianie boku na 7: {pole(c, 7)}")
-    print(f"Pole koła po zmianie promienia na 4: {pole(d, 4.0)}")
+    print(f"Pole koła po zmianie promienia na 4.0: {pole(d, 4.0)}")
 
     pola_powierzchni([a, b, c, d])
