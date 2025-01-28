@@ -10,6 +10,10 @@ class Figura:
         """Zwraca opis figury."""
         return "Figura bazowa"
 
+    def parametry(self):
+        """Zwraca parametry figury."""
+        return {}
+
 class Prostokat(Figura):
     """Klasa reprezentująca prostokąt."""
     def __init__(self, x: int, y: int):
@@ -20,6 +24,10 @@ class Prostokat(Figura):
     def opis(self):
         """Zwraca opis prostokąta."""
         return f"Prostokąt o wymiarach {self.x}x{self.y}"
+
+    def parametry(self):
+        """Zwraca parametry prostokąta."""
+        return {"x": self.x, "y": self.y}
 
 class Kwadrat(Prostokat):
     """Klasa reprezentująca kwadrat."""
@@ -40,44 +48,48 @@ class Kolo(Figura):
         """Zwraca opis koła."""
         return f"Koło o promieniu {self.r}"
 
+    def parametry(self):
+        """Zwraca parametry koła."""
+        return {"r": self.r}
+
 @dispatch(Figura)
-def pole(instance):
+def pole(figura):
     """Zwraca pole dla klasy Figura."""
     return 0
 
 @dispatch(Prostokat)
-def pole(instance):
+def pole(prostokat):
     """Zwraca pole prostokąta."""
-    return instance.x * instance.y
+    return prostokat.x * prostokat.y
 
 @dispatch(Prostokat, int, int)
-def pole(instance, x, y):
+def pole(prostokat, x, y):
     """Zwraca pole prostokąta po zmianie jego wymiarów."""
-    instance.x = x
-    instance.y = y
+    prostokat.x = x
+    prostokat.y = y
     return x * y
 
 @dispatch(Kwadrat)
-def pole(instance):
+def pole(kwadrat):
     """Zwraca pole kwadratu."""
-    return instance.x ** 2
+    return kwadrat.x ** 2
 
 @dispatch(Kwadrat, int)
-def pole(instance, x):
+def pole(kwadrat, x):
     """Zwraca pole kwadratu po zmianie jego boku."""
-    instance.x = x
-    instance.y = x
+    kwadrat.x = x
+    kwadrat.y = x
     return x ** 2
 
 @dispatch(Kolo)
-def pole(instance):
+def pole(kolo):
     """Zwraca pole koła."""
-    return math.pi * instance.r ** 2
+    return math.pi * kolo.r ** 2
 
 @dispatch(Kolo, float)
-def pole(instance, r):
+def pole(kolo, r):
     """Zwraca pole koła po zmianie jego promienia."""
-    instance.r = r
+    kolo.r = r
     return math.pi * r ** 2
 
 def pola_powierzchni(lista_figur):
