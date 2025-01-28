@@ -1,87 +1,83 @@
-from multipledispatch import dispatch
 import math
+from multipledispatch import dispatch
 
-# Klasa bazowa Figura
-class Figura(object):
+class Figura:
+    """Klasa bazowa dla wszystkich figur."""
     def __init__(self):
         pass
 
-# Klasa Prostokat
 class Prostokat(Figura):
+    """Klasa reprezentująca prostokąt."""
     def __init__(self, x: int, y: int):
         super().__init__()
         self.x = x
         self.y = y
 
-# Klasa Kwadrat
 class Kwadrat(Prostokat):
+    """Klasa reprezentująca kwadrat (szczególny przypadek prostokąta)."""
     def __init__(self, x: int):
         super().__init__(x, x)
 
-# Klasa Kolo
 class Kolo(Figura):
+    """Klasa reprezentująca koło."""
     def __init__(self, r: float):
         super().__init__()
         self.r = r
 
-# Funkcja pole dla klasy Figura
 @dispatch(Figura)
 def pole(instance: Figura):
+    """Zwraca pole dla klasy Figura."""
     return 0
 
-# Funkcja pole dla klasy Prostokat (bez podania dodatkowych argumentów)
 @dispatch(Prostokat)
 def pole(instance: Prostokat):
+    """Zwraca pole prostokąta."""
     return instance.x * instance.y
 
-# Funkcja pole dla klasy Prostokat (z podaniem boków jako argumentów)
 @dispatch(Prostokat, int, int)
 def pole(instance: Prostokat, x: int, y: int):
+    """Zwraca pole prostokąta po zmianie jego wymiarów."""
     instance.x = x
     instance.y = y
     return x * y
 
-# Funkcja pole dla klasy Kwadrat (bez podania dodatkowych argumentów)
 @dispatch(Kwadrat)
 def pole(instance: Kwadrat):
+    """Zwraca pole kwadratu."""
     return instance.x ** 2
 
-# Funkcja pole dla klasy Kwadrat (z podaniem boku jako argumentu)
 @dispatch(Kwadrat, int)
 def pole(instance: Kwadrat, x: int):
+    """Zwraca pole kwadratu po zmianie jego boku."""
     instance.x = x
     instance.y = x
     return x ** 2
 
-# Funkcja pole dla klasy Kolo (bez podania dodatkowych argumentów)
 @dispatch(Kolo)
 def pole(instance: Kolo):
+    """Zwraca pole koła."""
     return math.pi * instance.r ** 2
 
-# Funkcja pole dla klasy Kolo (z podaniem promienia jako argumentu)
 @dispatch(Kolo, float)
 def pole(instance: Kolo, r: float):
+    """Zwraca pole koła po zmianie jego promienia."""
     instance.r = r
     return math.pi * r ** 2
 
-# Funkcja do wyliczania pola dla listy obiektów
-def polaPowierzchni(listaFigur):
-    for i in listaFigur:
-        print(f"Pole obiektu: {pole(i)}")
+def pola_powierzchni(lista_figur):
+    """Wyświetla pola powierzchni dla listy figur."""
+    for figura in lista_figur:
+        print(f"Pole obiektu: {pole(figura)}")
 
 if __name__ == "__main__":
-    # Tworzenie obiektów
     a, b, c, d = Figura(), Prostokat(2, 4), Kwadrat(2), Kolo(3)
 
-    # Wywołania funkcji pole
     print(f"Pole prostokąta (2x4): {pole(b)}")
     print(f"Pole kwadratu (bok=2): {pole(c)}")
     print(f"Pole koła (r=3): {pole(d)}")
 
-    # Zmiana wymiarów za pomocą funkcji pole
     print(f"Pole prostokąta po zmianie na 5x6: {pole(b, 5, 6)}")
     print(f"Pole kwadratu po zmianie boku na 7: {pole(c, 7)}")
     print(f"Pole koła po zmianie promienia na 4: {pole(d, 4.0)}")
 
-    # Polimorfizm
-    polaPowierzchni([a, b, c, d])
+    pola_powierzchni([a, b, c, d])
