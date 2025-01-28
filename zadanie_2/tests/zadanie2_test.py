@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class Pojazd(ABC):
+    """Klasa abstrakcyjna reprezentująca pojazd."""
     def __init__(self, model: str, rok: int):
         self._model = model
         self._rok = rok
@@ -21,16 +22,19 @@ class Pojazd(ABC):
         self._predkosc = 0
 
 class Samochod(Pojazd):
+    """Klasa reprezentująca samochód."""
     def __init__(self, model: str, rok: int, liczba_drzwi: int):
         super().__init__(model, rok)
         self.liczba_drzwi = liczba_drzwi
 
 class Autobus(Pojazd):
+    """Klasa reprezentująca autobus."""
     def __init__(self, model: str, rok: int, liczba_miejsc: int):
         super().__init__(model, rok)
         self.liczba_miejsc = liczba_miejsc
 
 class FabrykaPojazdow(ABC):
+    """Abstrakcyjna klasa fabryki pojazdów."""
     def __init__(self, nazwa: str):
         self._nazwa = nazwa
         self._liczba_wyprodukowanych = 0
@@ -43,10 +47,9 @@ class FabrykaPojazdow(ABC):
     def utworz_fabryke(cls, typ_fabryki: str, nazwa: str):
         if typ_fabryki == 'samochod':
             return FabrykaSamochodow(nazwa)
-        elif typ_fabryki == 'autobus':
+        if typ_fabryki == 'autobus':
             return FabrykaAutobusow(nazwa)
-        else:
-            raise ValueError("Nieznany typ fabryki!")
+        raise ValueError("Nieznany typ fabryki!")
 
     @staticmethod
     def sprawdz_rok(rok: int) -> bool:
@@ -59,10 +62,11 @@ class FabrykaPojazdow(ABC):
         return self._liczba_wyprodukowanych
 
     @abstractmethod
-    def stworz_pojazd(self, model: str, rok: int, **kwargs) -> Pojazd:
+    def stworz_pojazd(self, model: str, rok: int, liczba_miejsc_drzwi: int) -> Pojazd:
         pass
 
 class FabrykaSamochodow(FabrykaPojazdow):
+    """Fabryka produkująca samochody."""
     def stworz_pojazd(self, model: str, rok: int, liczba_drzwi: int = 4) -> Samochod:
         if not self.sprawdz_rok(rok):
             raise ValueError("Nieprawidłowy rok produkcji!")
@@ -71,6 +75,7 @@ class FabrykaSamochodow(FabrykaPojazdow):
         return pojazd
 
 class FabrykaAutobusow(FabrykaPojazdow):
+    """Fabryka produkująca autobusy."""
     def stworz_pojazd(self, model: str, rok: int, liczba_miejsc: int = 50) -> Autobus:
         if not self.sprawdz_rok(rok):
             raise ValueError("Nieprawidłowy rok produkcji!")
@@ -103,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
