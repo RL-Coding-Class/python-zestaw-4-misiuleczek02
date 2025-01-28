@@ -6,6 +6,10 @@ class Figura:
     def __init__(self):
         pass
 
+    def opis(self):
+        """Zwraca opis figury."""
+        return "Figura bazowa"
+
 class Prostokat(Figura):
     """Klasa reprezentująca prostokąt."""
     def __init__(self, x: int, y: int):
@@ -13,10 +17,18 @@ class Prostokat(Figura):
         self.x = x
         self.y = y
 
+    def opis(self):
+        """Zwraca opis prostokąta."""
+        return f"Prostokąt o wymiarach {self.x}x{self.y}"
+
 class Kwadrat(Prostokat):
-    """Klasa reprezentująca kwadrat (szczególny przypadek prostokąta)."""
+    """Klasa reprezentująca kwadrat."""
     def __init__(self, x: int):
         super().__init__(x, x)
+
+    def opis(self):
+        """Zwraca opis kwadratu."""
+        return f"Kwadrat o boku {self.x}"
 
 class Kolo(Figura):
     """Klasa reprezentująca koło."""
@@ -24,42 +36,46 @@ class Kolo(Figura):
         super().__init__()
         self.r = r
 
+    def opis(self):
+        """Zwraca opis koła."""
+        return f"Koło o promieniu {self.r}"
+
 @dispatch(Figura)
-def pole(instance: Figura):
+def pole(instance):
     """Zwraca pole dla klasy Figura."""
     return 0
 
 @dispatch(Prostokat)
-def pole(instance: Prostokat):
+def pole(instance):
     """Zwraca pole prostokąta."""
     return instance.x * instance.y
 
 @dispatch(Prostokat, int, int)
-def pole(instance: Prostokat, x: int, y: int):
+def pole(instance, x, y):
     """Zwraca pole prostokąta po zmianie jego wymiarów."""
     instance.x = x
     instance.y = y
     return x * y
 
 @dispatch(Kwadrat)
-def pole(instance: Kwadrat):
+def pole(instance):
     """Zwraca pole kwadratu."""
     return instance.x ** 2
 
 @dispatch(Kwadrat, int)
-def pole(instance: Kwadrat, x: int):
+def pole(instance, x):
     """Zwraca pole kwadratu po zmianie jego boku."""
     instance.x = x
     instance.y = x
     return x ** 2
 
 @dispatch(Kolo)
-def pole(instance: Kolo):
+def pole(instance):
     """Zwraca pole koła."""
     return math.pi * instance.r ** 2
 
 @dispatch(Kolo, float)
-def pole(instance: Kolo, r: float):
+def pole(instance, r):
     """Zwraca pole koła po zmianie jego promienia."""
     instance.r = r
     return math.pi * r ** 2
