@@ -1,4 +1,5 @@
 import time
+import os
 
 try:
     import schedule
@@ -32,8 +33,8 @@ def main(interval, max_repeats):
         time.sleep(interval)
 
     print("📊 Generowanie wykresu...")
-    plot_flight_data()
-    print("✅ Program zakończył działanie.")
+    plot_flight_data(show_plot=False)
+    print("✅ Program zakończył działanie. Wykres zapisano jako 'flight_plot.png'.")
 
 if __name__ == '__main__':
     FETCH_INTERVAL = 10  # Skróć czas na testy
