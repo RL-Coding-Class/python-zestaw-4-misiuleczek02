@@ -1,5 +1,8 @@
 import math
-from multipledispatch import dispatch
+try:
+    from multipledispatch import dispatch
+except ImportError:
+    print("Error: multipledispatch module not found. Install it using 'pip install multipledispatch'")
 
 class Figura:
     """Klasa bazowa dla wszystkich figur."""
@@ -16,6 +19,9 @@ class Prostokat(Figura):
     def opis(self):
         """Zwraca opis prostokąta."""
         return f"Prostokąt o wymiarach {self.x}x{self.y}"
+
+    def pole(self):
+        return self.x * self.y
 
 class Kwadrat(Prostokat):
     """Klasa reprezentująca kwadrat."""
@@ -35,51 +41,16 @@ class Kolo(Figura):
         """Zwraca opis koła."""
         return f"Koło o promieniu {self.r}"
 
-@dispatch(Figura)
-def pole(instance: Figura) -> float:
-    """Zwraca pole dla klasy Figura."""
-    return 0.0
-
-@dispatch(Prostokat)
-def pole(instance: Prostokat) -> float:
-    """Zwraca pole prostokąta."""
-    return instance.x * instance.y
-
-@dispatch(Prostokat, int, int)
-def pole(instance: Prostokat, x: int, y: int) -> float:
-    """Zmienia wymiary prostokąta i zwraca jego pole."""
-    instance.x = x
-    instance.y = y
-    return x * y
-
-@dispatch(Kwadrat)
-def pole(instance: Kwadrat) -> float:
-    """Zwraca pole kwadratu."""
-    return instance.x ** 2
-
-@dispatch(Kwadrat, int)
-def pole(instance: Kwadrat, x: int) -> float:
-    """Zmienia bok kwadratu i zwraca jego pole."""
-    instance.x = x
-    instance.y = x
-    return x ** 2
-
-@dispatch(Kolo)
-def pole(instance: Kolo) -> float:
-    """Zwraca pole koła."""
-    return math.pi * instance.r ** 2
-
-@dispatch(Kolo, float)
-def pole(instance: Kolo, r: float) -> float:
-    """Zmienia promień koła i zwraca jego pole."""
-    instance.r = r
-    return math.pi * r ** 2
-
+    def pole(self):
+        return math.pi * self.r ** 2
 
 def pola_powierzchni(lista_figur):
     """Wyświetla pola powierzchni dla listy figur."""
     for figura in lista_figur:
-        print(f"Pole obiektu: {pole(figura)}")
+        if hasattr(figura, 'pole'):
+            print(f"Pole obiektu: {figura.pole()}")
+        else:
+            print(f"Brak pola dla obiektu: {figura.opis()}")
 
 if __name__ == "__main__":
     a = Figura()
@@ -87,12 +58,8 @@ if __name__ == "__main__":
     c = Kwadrat(2)
     d = Kolo(3)
 
-    print(f"Pole prostokąta (2x4): {pole(b)}")
-    print(f"Pole kwadratu (bok=2): {pole(c)}")
-    print(f"Pole koła (r=3): {pole(d)}")
-
-    print(f"Pole prostokąta po zmianie na 5x6: {pole(b, 5, 6)}")
-    print(f"Pole kwadratu po zmianie boku na 7: {pole(c, 7)}")
-    print(f"Pole koła po zmianie promienia na 4.0: {pole(d, 4.0)}")
+    print(f"Pole prostokąta (2x4): {b.pole()}")
+    print(f"Pole kwadratu (bok=2): {c.pole()}")
+    print(f"Pole koła (r=3): {d.pole()}")
 
     pola_powierzchni([a, b, c, d])
