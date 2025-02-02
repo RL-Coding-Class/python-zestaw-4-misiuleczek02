@@ -3,9 +3,6 @@ from multipledispatch import dispatch
 
 class Figura:
     """Klasa bazowa dla wszystkich figur."""
-    def __init__(self):
-        pass
-
     def opis(self):
         """Zwraca opis figury."""
         return "Figura bazowa"
@@ -13,7 +10,6 @@ class Figura:
 class Prostokat(Figura):
     """Klasa reprezentująca prostokąt."""
     def __init__(self, x: int, y: int):
-        super().__init__()
         self.x = x
         self.y = y
 
@@ -33,7 +29,6 @@ class Kwadrat(Prostokat):
 class Kolo(Figura):
     """Klasa reprezentująca koło."""
     def __init__(self, r: float):
-        super().__init__()
         self.r = r
 
     def opis(self):
@@ -41,46 +36,47 @@ class Kolo(Figura):
         return f"Koło o promieniu {self.r}"
 
 @dispatch(Figura)
-def pole(instance):
+def pole(instance: Figura) -> float:
     """Zwraca pole dla klasy Figura."""
-    return 0
+    return 0.0
 
 @dispatch(Prostokat)
-def pole(instance):
+def pole(instance: Prostokat) -> float:
     """Zwraca pole prostokąta."""
     return instance.x * instance.y
 
 @dispatch(Prostokat, int, int)
-def pole(instance, x, y):
+def pole(instance: Prostokat, x: int, y: int) -> float:
     """Zmienia wymiary prostokąta i zwraca jego pole."""
     instance.x = x
     instance.y = y
     return x * y
 
 @dispatch(Kwadrat)
-def pole(instance):
+def pole(instance: Kwadrat) -> float:
     """Zwraca pole kwadratu."""
     return instance.x ** 2
 
 @dispatch(Kwadrat, int)
-def pole(instance, x):
+def pole(instance: Kwadrat, x: int) -> float:
     """Zmienia bok kwadratu i zwraca jego pole."""
     instance.x = x
     instance.y = x
     return x ** 2
 
 @dispatch(Kolo)
-def pole(instance):
+def pole(instance: Kolo) -> float:
     """Zwraca pole koła."""
     return math.pi * instance.r ** 2
 
 @dispatch(Kolo, float)
-def pole(instance, r):
+def pole(instance: Kolo, r: float) -> float:
     """Zmienia promień koła i zwraca jego pole."""
     instance.r = r
     return math.pi * r ** 2
 
-def polaPowierzchni(lista_figur):
+
+def pola_powierzchni(lista_figur):
     """Wyświetla pola powierzchni dla listy figur."""
     for figura in lista_figur:
         print(f"Pole obiektu: {pole(figura)}")
@@ -99,5 +95,4 @@ if __name__ == "__main__":
     print(f"Pole kwadratu po zmianie boku na 7: {pole(c, 7)}")
     print(f"Pole koła po zmianie promienia na 4.0: {pole(d, 4.0)}")
 
-    polaPowierzchni([a, b, c, d])
-
+    pola_powierzchni([a, b, c, d])
