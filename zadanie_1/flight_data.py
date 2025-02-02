@@ -62,8 +62,8 @@ def fetch_flight_data(databasefile="flights.db"):
     lon_min, lat_min = -85.4277, 32.6407
     lon_max, lat_max = -83.4277, 34.6407
     
-    user_name = 'twojlogin'
-    password = 'twojehaslo'
+    user_name = 'misiuleczek'
+    password = 'Kotysafajne1'
     
     url_data = (
         f'https://{user_name}:{password}@opensky-network.org/api/states/all?' #Strona nie działa, nie zdążyłam utworzyć realnego konta
